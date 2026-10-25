@@ -168,7 +168,7 @@ export default function Home() {
 
             {/* 服装と傘のアドバイス */}
             {clothing && umbrella && (
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid gap-3 sm:grid-cols-2">
                 <Advice title="服装" emoji={clothing.emoji} text={clothing.text} />
                 <Advice title="傘いる？" emoji={umbrella.emoji} text={umbrella.text} />
               </div>
