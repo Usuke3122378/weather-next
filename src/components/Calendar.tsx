@@ -82,7 +82,7 @@ export default function Calendar({ today, available, selected, onSelect }: Props
               key={key}
               disabled={!enabled}
               onClick={() => onSelect(key)}
-              className={`aspect-square rounded-full transition ${
+              className={`mx-auto aspect-square w-full max-w-11 rounded-full transition ${
                 isSelected
                   ? "bg-sky-500 font-bold text-white"
                   : enabled

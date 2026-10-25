@@ -114,8 +114,8 @@ export default function Home() {
       {loading && !data && <p className="text-center text-slate-500">読み込み中…</p>}
 
       {data && day && (
-        <div className={`grid gap-6 md:grid-cols-[1fr_320px] ${loading ? "opacity-50" : ""}`}>
-          <section className="space-y-6">
+        <div className={`grid grid-cols-[minmax(0,1fr)] gap-6 md:grid-cols-[minmax(0,1fr)_320px] ${loading ? "opacity-50" : ""}`}>
+          <section className="min-w-0 space-y-6">
             {/* 選んだ日の天気 */}
             <div className="rounded-2xl bg-gradient-to-br from-sky-400 to-indigo-500 p-6 text-white shadow">
               <p className="text-sm opacity-90">
@@ -208,7 +208,7 @@ export default function Home() {
                       <span className="text-rose-500">{d.max}°</span> /{" "}
                       <span className="text-sky-500">{d.min}°</span>
                     </span>
-                    <span className="w-10 text-right text-xs text-slate-500">☔{d.pop}%</span>
+                    <span className="w-14 whitespace-nowrap text-right text-xs text-slate-500">☔{d.pop}%</span>
                   </button>
                 </li>
               ))}
@@ -228,7 +228,7 @@ function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-xl bg-white/20 px-2 py-3">
       <p className="text-xs opacity-90">{label}</p>
-      <p className="mt-1 font-bold">{value}</p>
+      <p className="mt-1 whitespace-nowrap text-sm font-bold sm:text-base">{value}</p>
     </div>
   );
 }
