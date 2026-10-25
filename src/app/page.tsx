@@ -2,7 +2,13 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Calendar from "@/components/Calendar";
-import { iconToEmoji, type WeatherResponse } from "@/lib/weather";
+import {
+  clothingAdvice,
+  iconToEmoji,
+  umbrellaAdvice,
+  weatherGradient,
+  type WeatherResponse,
+} from "@/lib/weather";
 
 const WEEKDAY = ["日", "月", "火", "水", "木", "金", "土"];
 
@@ -75,6 +81,10 @@ export default function Home() {
 
   const day = data?.days.find((d) => d.date === selected);
   const isToday = data && selected === data.today;
+  const icon = data && day ? (isToday ? data.current.icon : day.icon) : "";
+  // 今日は体感温度、ほかの日は最高気温で服装を決める
+  const clothing = data && day && clothingAdvice(isToday ? data.current.feelsLike : day.max);
+  const umbrella = day && umbrellaAdvice(day.pop);
 
   return (
     <main className="mx-auto w-full max-w-4xl flex-1 px-4 py-8">
@@ -117,7 +127,7 @@ export default function Home() {
         <div className={`grid grid-cols-[minmax(0,1fr)] gap-6 md:grid-cols-[minmax(0,1fr)_320px] ${loading ? "opacity-50" : ""}`}>
           <section className="min-w-0 space-y-6">
             {/* 選んだ日の天気 */}
-            <div className="rounded-2xl bg-gradient-to-br from-sky-400 to-indigo-500 p-6 text-white shadow">
+            <div className={`rounded-2xl bg-gradient-to-br ${weatherGradient(icon)} p-6 text-white shadow transition-colors`}>
               <p className="text-sm opacity-90">
                 📍 {data.location.name}（{data.location.country}）
               </p>
@@ -128,7 +138,7 @@ export default function Home() {
 
               <div className="mt-4 flex items-center gap-4">
                 <span className="text-6xl">
-                  {iconToEmoji(isToday ? data.current.icon : day.icon)}
+                  {iconToEmoji(icon)}
                 </span>
                 <div>
                   {isToday ? (
@@ -155,6 +165,14 @@ export default function Home() {
                 <Stat label="降水確率" value={`${day.pop}%`} />
               </div>
             </div>
+
+            {/* 服装と傘のアドバイス */}
+            {clothing && umbrella && (
+              <div className="grid grid-cols-2 gap-3">
+                <Advice title="服装" emoji={clothing.emoji} text={clothing.text} />
+                <Advice title="傘いる？" emoji={umbrella.emoji} text={umbrella.text} />
+              </div>
+            )}
 
             {/* 3時間ごと */}
             <div className="rounded-2xl bg-white/80 p-4 shadow-sm dark:bg-slate-800/80">
@@ -221,6 +239,18 @@ export default function Home() {
         データ提供：OpenWeatherMap
       </p>
     </main>
+  );
+}
+
+function Advice({ title, emoji, text }: { title: string; emoji: string; text: string }) {
+  return (
+    <div className="flex items-center gap-3 rounded-2xl bg-white/80 p-4 shadow-sm dark:bg-slate-800/80">
+      <span className="text-4xl">{emoji}</span>
+      <div className="min-w-0">
+        <p className="text-xs text-slate-500 dark:text-slate-300">{title}</p>
+        <p className="font-bold">{text}</p>
+      </div>
+    </div>
   );
 }
 
