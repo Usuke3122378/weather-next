@@ -159,6 +159,11 @@ export default function Home() {
             {/* 3時間ごと */}
             <div className="rounded-2xl bg-white/80 p-4 shadow-sm dark:bg-slate-800/80">
               <h2 className="mb-3 font-bold">3時間ごとの予報</h2>
+              {day.hours.length === 0 && (
+                <p className="text-sm text-slate-500 dark:text-slate-300">
+                  今日の3時間ごとの予報はおしまいです。降水確率は、このあと3時間の予報です。
+                </p>
+              )}
               <div className="flex gap-3 overflow-x-auto pb-2">
                 {day.hours.map((h) => (
                   <div

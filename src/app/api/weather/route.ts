@@ -19,7 +19,13 @@ type OwmItem = {
 
 type OwmCurrent = {
   name: string;
-  main: { temp: number; feels_like: number; humidity: number };
+  main: {
+    temp: number;
+    feels_like: number;
+    temp_min: number;
+    temp_max: number;
+    humidity: number;
+  };
   weather: { icon: string; description: string }[];
   wind: { speed: number };
   sys: { country: string };
@@ -142,12 +148,27 @@ export async function GET(request: NextRequest) {
       };
     });
 
+    // 夜は今日の3時間ごとの予報が残っていないので、いまの天気から今日の分を作る
+    const today = localParts(Math.floor(Date.now() / 1000), tz).date;
+    if (days[0]?.date !== today) {
+      days.unshift({
+        date: today,
+        min: Math.round(now.main.temp_min),
+        max: Math.round(now.main.temp_max),
+        humidity: now.main.humidity,
+        pop: Math.round((forecast.list[0]?.pop ?? 0) * 100),
+        icon: now.weather[0].icon,
+        description: now.weather[0].description,
+        hours: [],
+      });
+    }
+
     const body: WeatherResponse = {
       location: {
         name: place?.local_names?.ja ?? place?.name ?? now.name,
         country: place?.country ?? now.sys.country,
       },
-      today: localParts(Math.floor(Date.now() / 1000), tz).date,
+      today,
       current: {
         temp: Math.round(now.main.temp),
         feelsLike: Math.round(now.main.feels_like),
